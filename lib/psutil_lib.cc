@@ -19,7 +19,7 @@
 #include "workers/process_worker.h"
 #include "workers/sysconf_worker.h"
 
-#include "psutil_lib_osx.h"
+#include "psutil_lib.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
@@ -89,7 +89,7 @@ Handle<Value> PSUtilLib::NetworkIOCounters(const Arguments& args) {
   // Get the value of results being returned
   worker->prNic = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -112,7 +112,7 @@ Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
   // Get the value of results being returned
   worker->prDisk = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -132,7 +132,7 @@ Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -152,7 +152,7 @@ Handle<Value> PSUtilLib::SwapMemory(const Arguments& args) {
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -172,7 +172,7 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
   // Set parameters
   worker->perCPU = args[0]->ToBoolean()->BooleanValue();
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -190,7 +190,7 @@ Handle<Value> PSUtilLib::PidList(const Arguments& args) {
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -210,7 +210,7 @@ Handle<Value> PSUtilLib::PidExists(const Arguments& args) {
   // Set parameters
   worker->pid = args[0]->ToNumber()->Value();
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -236,7 +236,7 @@ Handle<Value> PSUtilLib::ProcessInfo(const Arguments& args) {
   worker->parameters = Persistent<Object>::New(args[2]->ToObject());
 
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -257,7 +257,7 @@ v8::Handle<v8::Value> PSUtilLib::DiskPartitions(const v8::Arguments& args) {
   worker->callback = v8::Persistent<v8::Function>::New(callback);
 
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return v8::Undefined();
 }
@@ -284,7 +284,7 @@ Handle<Value> PSUtilLib::DiskUsage(const Arguments& args) {
   // worker->path = args[0]->ToString()->c_str();
 
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -308,7 +308,7 @@ Handle<Value> PSUtilLib::SysConf(const Arguments& args) {
   worker->name = args[0]->ToUint32()->Value();
 
   // Trigger the work
-  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, (uv_after_work_cb)PSUtilLib::After);
   // Return the handle to the instance
   return Undefined();
 }
@@ -378,3 +378,5 @@ extern "C" void init(v8::Handle<v8::Object> target)
   v8::HandleScope scope;
   PSUtilLib::Initialize(target);
 }
+
+NODE_MODULE(psutil_lib, init)

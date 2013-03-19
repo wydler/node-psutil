@@ -4,9 +4,9 @@
   },
   'targets': [
     {
-      'target_name': 'psutil_lib_osx',
+      'target_name': 'psutil_lib',
       'sources': [
-        'lib/psutil_lib_osx.cc',
+        'lib/psutil_lib.cc',
         'lib/workers/worker.cc',
         'lib/workers/virtual_memory_worker.cc',
         'lib/workers/cpu_worker.cc',

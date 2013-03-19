@@ -4,6 +4,7 @@
 #elif defined __linux__
   #include <errno.h>
   #include <stdlib.h>
+  #include <string.h>
   #include <mntent.h>
 #endif
 

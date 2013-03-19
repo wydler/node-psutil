@@ -4,6 +4,7 @@
 #include "disk_usage_worker.h"
 #include <errno.h>
 #include <math.h>
+#include <string.h>
 
 #ifdef __linux__
   #include <stdlib.h>
